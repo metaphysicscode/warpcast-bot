@@ -1,0 +1,10 @@
+
+{
+  "build": {
+    "env": "python",
+    "command": "pip install -r requirements.txt"
+  },
+  "start": {
+    "command": "python app.py"
+  }
+}
