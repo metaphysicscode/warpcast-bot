@@ -1,4 +1,3 @@
-
 import os
 import time
 import requests
@@ -31,25 +30,33 @@ def get_latest_cast(username):
                     return text
         return None
     except Exception as e:
-        print(f"[{username}] Error: {e}")
+        print(f"[{username}] Error fetching cast: {e}")
         return None
 
 def send_to_telegram(msg):
     try:
         url = f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/sendMessage"
         params = {"chat_id": TELEGRAM_CHAT_ID, "text": msg}
-        requests.get(url, params=params)
+        res = requests.get(url, params=params)
+        print(f"Sent to Telegram: {msg} (status: {res.status_code})")
     except Exception as e:
         print(f"Telegram Error: {e}")
 
 if __name__ == "__main__":
+    print("✅ Warpcast Telegram Bot started and listening...")
     while True:
         for user in USERS:
+            print(f"Checking user: {user}")
             cast = get_latest_cast(user)
             if cast:
                 if user not in last_seen or last_seen[user] != cast:
                     message = f"[{user}] {cast}"
-                    print(message)
+                    print(f"New cast detected → {message}")
                     send_to_telegram(message)
                     last_seen[user] = cast
+                else:
+                    print(f"No new cast from {user}")
+            else:
+                print(f"No cast found for {user}")
         time.sleep(5)
+
